@@ -1,0 +1,18 @@
+{
+  "name": "docsmith",
+  "description": "The docsmith skill, packaged as its own plugin marketplace.",
+  "owner": {
+    "name": "SilvereWolf",
+    "url": "https://github.com/SilvereWolf"
+  },
+  "plugins": [
+    {
+      "name": "docsmith",
+      "source": "./",
+      "description": "Write a README, guide, how-to, runbook or onboarding doc from notes, chat transcripts, links and code: one fixed skeleton adapted to the material, Mermaid diagrams only where the material describes a real flow, and a short structuring interview before writing.",
+      "version": "0.1.0",
+      "category": "documentation",
+      "keywords": ["documentation", "readme", "guide", "how-to", "runbook", "mermaid", "diagrams"]
+    }
+  ]
+}

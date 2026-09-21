@@ -1,0 +1,26 @@
+mailer service, my scratch notes (test material for docsmith, invented)
+
+what it is: sends transactional email. API enqueues a message onto SQS "mailer-main", worker pods consume, call the email provider's HTTP API, mark sent.
+components: api -> sqs main queue -> worker (k8s deploy mailer-worker, ns mailer, 3 replicas) -> provider. failures -> sqs dead-letter queue "mailer-dlq" after maxReceiveCount (3? see thread, queue says 5)
+
+message lifecycle: queued -> sending (worker picked it up) -> sent (provider 2xx) or failed (provider 4xx/5xx, timeout). failed -> back to queued while receive count < max, else -> dead-letter. from dead-letter a human can redrive -> queued again.
+
+alarms: MailerQueueDepth > 500 for 10 min pages #mailer-oncall via PagerDuty service "mailer". nothing alarms on the DLQ yet (TODO from the 08-27 incident)
+
+access you need: kubectl context prod-eu with the mailer namespace, AWS role mailer-oncall (sqs read + redrive), provider console login is in 1password vault "mailer"
+
+useful commands
+- pods: kubectl -n mailer get pods
+- logs: kubectl -n mailer logs deploy/mailer-worker --since=15m
+- queue depth: aws sqs get-queue-attributes --queue-url $MAILER_MAIN_URL --attribute-names ApproximateNumberOfMessages
+- dlq depth: same with $MAILER_DLQ_URL
+- scale: kubectl -n mailer scale deploy/mailer-worker --replicas=N
+- redrive: scripts/redrive.sh (in the mailer repo) moves 100 messages per run from dlq to main; run it repeatedly until the dlq is empty; it prints "moved 100" / "moved 0, dlq empty"
+
+things that have gone wrong
+- provider throttling (429): worker panics, restarts, depth climbs. fix was provider tier + scale to 1 while throttled. proper fix (backoff) not done yet
+- provider outage (5xx for everyone): nothing to do but wait, messages retry, some land in dlq, redrive after
+- bad message (malformed recipient): goes straight to dlq after retries, redriving it just fails again; needs the message deleted from the dlq by hand (aws sqs receive-message / delete-message)
+
+escalation: if provider ticket needed, sam has the account; platform team via PagerDuty "platform-oncall" for cluster problems. severity: sev2 if depth > 500 for > 30 min (customers see delayed email), sev1 if nothing sends for > 15 min
+open: retries 3 vs 5, backoff in worker, dlq alarm

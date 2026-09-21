@@ -1,0 +1,12 @@
+dev setup notes for docsmith (scratch file, cleaned up a bit)
+
+- need: git, python 3.8+ (both linters are stdlib only, their docstrings say 3.8+ but I've only ever run them on 3.11 myself, never checked on anything older)
+- node 20 only if you want to preview mermaid diagrams locally with npx @mermaid-js/mermaid-cli, otherwise skip it
+- clone: git clone git@github.com:SilvereWolf/DocSmitty.git
+- claude code picks the skill up automatically from .claude/skills/docsmith/ once you open the repo -- no separate install step
+- smoke test the linters:
+  python3 .claude/skills/docsmith/scripts/lint_doc.py --selftest -> should end "0 problem(s)" and exit 0
+  python3 .claude/skills/docsmith/scripts/check_mermaid.py --selftest -> same idea, exit 0
+- no .env or secrets anywhere in this repo
+- there's no LICENSE file yet -- TODO add one before pointing anyone outside the team at this
+- the eval suite (.claude/skills/docsmith/evals/) isn't wired into CI yet, you run it by hand -- TODO

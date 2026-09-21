@@ -1,0 +1,14 @@
+{
+  "name": "docsmith",
+  "displayName": "Docsmith",
+  "version": "0.1.0",
+  "description": "Write a README, guide, how-to, runbook or onboarding doc from notes, chat transcripts, links and code: one fixed skeleton adapted to the material, Mermaid diagrams only where the material describes a real flow, and a short structuring interview before writing.",
+  "author": {
+    "name": "SilvereWolf",
+    "url": "https://github.com/SilvereWolf"
+  },
+  "homepage": "https://github.com/SilvereWolf/DocSmitty#readme",
+  "repository": "https://github.com/SilvereWolf/DocSmitty",
+  "keywords": ["documentation", "readme", "guide", "how-to", "runbook", "mermaid", "diagrams"],
+  "skills": "./.claude/skills/"
+}

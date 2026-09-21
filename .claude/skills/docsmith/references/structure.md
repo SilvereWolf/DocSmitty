@@ -155,6 +155,8 @@ Wrap in `<details><summary>…</summary>` anything long (over ~30 lines), option
 
 **Voice.** Second person, present tense, active: "You run the installer and it writes…". Contractions are fine. Name the tool; "we" only in Onboarding, where "we" is the team.
 
+**No em dashes.** Where the instinct is to reach for one, use a colon, a comma, a period splitting the sentence in two, or parentheses instead. A hyphen-minus in a compound word (`pre-execution`, `non-interactive`) is unrelated and stays.
+
 **Emoji.** None in headings, bullets or tables. A single status glyph in At a glance is tolerated only when the repo's existing docs already use that convention. Alerts already carry the visual signal emoji are reached for.
 
 **Badges.** Only badges backed by something in the material: an actual workflow file, an actual published package, an actual license file. Maximum four, on one line under the tagline. When nothing is verifiable, no badges.
@@ -207,7 +209,7 @@ The blank line before `</details>` is not optional (3.7); `scripts/lint_doc.py` 
 
 ### 3.11 Figures (real images)
 
-A Figure is either a generated Mermaid diagram (3.9's neighbor concept, detected and drawn per the diagrams reference) or a real image the user supplied — a screenshot, a photo, an existing architecture picture. Detection, worthiness-equivalent judgement and asset handling for a supplied image are the diagrams reference's job (section 9); this section fixes how one looks in the Markdown, which is identical for both kinds:
+A Figure is either a generated Mermaid diagram (3.9's neighbor concept, detected and drawn per the diagrams reference) or a real image the user supplied: a screenshot, a photo, an existing architecture picture. Detection, worthiness-equivalent judgement and asset handling for a supplied image are the diagrams reference's job (section 9); this section fixes how one looks in the Markdown, which is identical for both kinds:
 
 ```markdown
 The dashboard groups jobs into three columns by status:
@@ -217,13 +219,13 @@ The dashboard groups jobs into three columns by status:
 *Figure: the job dashboard as captured 2026-09-20; column order matches the state machine in [How it works](#how-it-works).*
 ```
 
-Alt text is required and descriptive, never `![image]` or `![screenshot]` — the same rule 3.8 gives links ("descriptive text, never 'here'") applies to what a reader sees when the image does not load. The italic caption line follows the same convention a diagram's caption does (section 4) and shares its figure-numbering sequence when the doc has more than one Figure of either kind. Placement, budget and the "never fabricate" boundary are section 4's and the diagrams reference's; only a Mermaid diagram is generated, so only a Mermaid diagram needs the anti-fabrication rules — a supplied image is embedded as-is or not at all.
+Alt text is required and descriptive, never `![image]` or `![screenshot]`: the same rule 3.8 gives links ("descriptive text, never 'here'") applies to what a reader sees when the image does not load. The italic caption line follows the same convention a diagram's caption does (section 4) and shares its figure-numbering sequence when the doc has more than one Figure of either kind. Placement, budget and the "never fabricate" boundary are section 4's and the diagrams reference's; only a Mermaid diagram is generated, so only a Mermaid diagram needs the anti-fabrication rules, and a supplied image is embedded as-is or not at all.
 
 ---
 
 ## 4. Where diagrams and figures go
 
-Detection and construction belong to the diagrams reference; this section fixes placement and framing so the two agree. Everything here applies equally to a Mermaid diagram and a supplied image embedded as a Figure (3.11) — both are visual material that sits next to the prose it illustrates.
+Detection and construction belong to the diagrams reference; this section fixes placement and framing so the two agree. Everything here applies equally to a Mermaid diagram and a supplied image embedded as a Figure (3.11): both are visual material that sits next to the prose it illustrates.
 
 - A diagram or figure sits **immediately before the prose that walks through it**, never after and never in an appendix.
 - Lead in with one sentence ending in a colon ("The observer evaluates every action in three passes:"), then the `mermaid` fence or the `![alt](path)` image, then an italic caption line directly under it: `*Figure 1: Observer decision flow. Exit codes 0, 1 and 2 map to allow, block and needs-human.*` Number figures only when the doc has more than one and the prose refers to them by number; a diagram and a supplied image share one numbering sequence.
@@ -246,7 +248,7 @@ These are the structural choices this contract leaves open. The grill-me phase a
 | The one extra H2 and its name | None | A ten-line-plus concept fits no slot. |
 | Rename choice | The first vocabulary entry for the type | Two vocabulary entries fit equally ("Architecture" versus "Decision flow"). |
 | Which mechanism gets the diagram | The budget rule (diagrams reference, section 2) and its per-type table (section 3) | Several candidates and a one-diagram budget. |
-| Which supplied images become figures, and where | Embed one per section that discusses it; skip an image no section discusses (diagrams reference, section 9) | A supplied image could plausibly go in more than one section, or its role (read for text vs. embedded figure) is unclear. |
+| Which supplied images become figures, and where | Embed every one, in the section closest to what it shows; excluding one is never silent (diagrams reference, section 9) | A supplied image could plausibly go in more than one section, its role (read for text vs. embedded figure) is unclear, or it seems to have no clear home at all. |
 | Sources form | Per 3.9: HTML comment for a README, `<details>` block otherwise | The user has said the doc is internal (visible section) or wants a README's provenance shown. |
 | Badges and emoji opt-in | Off | The repo's existing docs use them. |
 | Existing file handling | Trivial stub: replace and say so. Real content: write `<name>.new.md` beside it | A file with real content exists at the destination. Asked first, because it is the only irreversible decision. |
@@ -294,7 +296,7 @@ Run this over the finished draft. Fix, do not annotate. The first group is mecha
 1. Exactly one H1; the tagline blockquote follows it; At a glance has 3–6 labelled bullets and no heading.
 2. Sections appear in skeleton order (Runbook order per section 2 is the only exception); headings come from the vocabulary.
 3. No heading is followed by nothing or directly by another H2; an H2 grouping H3s has its orientation line.
-4. No placeholder text: TBD, "coming soon", "lorem", "[insert]", a bare "…" standing in for content; at most three `TODO`s, each saying what is missing and listed in Assumptions.
+4. No placeholder text: TBD, "coming soon", "lorem", "[insert]", a bare "…" standing in for content; at most three `TODO`s, each saying what is missing and listed in Assumptions. No em dash (`—`) anywhere in the body (3.8).
 5. Every code fence has a language tag; no `$` prompt inside `bash`/`sh` fences; no H5.
 6. Alerts: none consecutive, none more often than once per ~40 lines, each indented into its step when inside a list.
 7. Every `](#…)` link resolves under the anchor rule (3.3); every relative file path exists in the repo.
@@ -306,7 +308,7 @@ Run this over the finished draft. Fix, do not annotate. The first group is mecha
 10. No invented output strings, commands, flags, badges, licenses, versions, dates or URLs. Everything either traces to a listed source or sits in Assumptions; chat-derived "planned" behaviour is marked in the body.
 11. Every diagram has a lead-in, a caption and prose that reuses its node labels; no diagram exists that the diagrams reference did not find. Every embedded figure has descriptive alt text, a lead-in and a caption; no figure was redrawn as Mermaid, and no Mermaid diagram duplicates a figure already shown.
 12. Terminology is consistent: one spelling per tool, command, path and code name across prose, tables and diagrams.
-13. Voice is second person, present tense; no "we" outside Onboarding; no emoji in headings, bullets or tables.
+13. Voice is second person, present tense; no "we" outside Onboarding; no emoji in headings, bullets or tables; no em dash anywhere in the body.
 14. Length is within the ceiling, and got there by moving detail into `<details>` or Reference, not by deleting steps.
 15. Sources lists every input consumed, in the visibility the interview chose; Assumptions exists exactly when 3.10's triggers fired, and the user was told the assumptions in chat.
 16. Read once as the intended reader: can they succeed without opening another file? If not, what is missing goes in, not in a footnote.

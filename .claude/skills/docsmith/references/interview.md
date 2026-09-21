@@ -87,7 +87,7 @@ consequential `?` first, not the easiest.
 Keep it under ~25 lines:
 
 ```
-Draft outline — Guide (Guide skeleton). Destination docs/observer-guide.md: does not exist.
+Draft outline: Guide (Guide skeleton). Destination docs/observer-guide.md: does not exist.
   1. Overview          pre-execution guardrail; one action string in, exit 0/1/2 out
   2. How it works      flowchart: deny → protected path → confirm → allow (? with or without log-write nodes)
   3. Prerequisites     a caller that passes one action string (observer.sh usage line)
@@ -194,8 +194,11 @@ Ask about inclusion only for a marginal candidate, and prefer skipping over gues
 Supplied images (the `Figures` bucket) follow the same branch: which are embedded and
 where, never whether one *could* be reconstructed as Mermaid instead (`references/diagrams.md`,
 section 9 already settled that a real image always wins over a redraw). Ask when a
-supplied image could plausibly sit in more than one section, or when its role — read for
-its text versus embedded as a figure — is not obvious from the material.
+supplied image could plausibly sit in more than one section, when its role (read for
+its text versus embedded as a figure) is not obvious from the material, or when the
+material gives it no obvious home at all: `references/diagrams.md` section 9 makes
+excluding a supplied image a question, never a silent drop, so a marginal image is
+always worth one branch here rather than a Sources footnote.
 
 - "You attached `dashboard.png`. It could illustrate How it works (what the dashboard
   looks like) or the first Walkthrough step (what you see after setup). Which, or both?"
@@ -271,7 +274,7 @@ deterministic rather than invented on the spot. Each unanswered branch becomes a
 | Scope | Everything about the named subject; digressions get one line under "Not covered"; deferred work gets a short "Open items" section |
 | Sections | The skeleton; drop a section with nothing to fill; merge two whose content overlaps by more than half |
 | Diagrams | Every clear flow, at the granularity the material supports, with shared side steps (logging, metrics) folded into the terminal labels as the canonical shapes do; marginal candidates skipped |
-| Figures | Every supplied image with a section that discusses it, embedded there; an image with no discussing section, or only described and never attached, left out |
+| Figures | Every supplied image embedded, in the section closest to what it shows even when the fit is loose, with the placement flagged in Assumptions if uncertain; excluded only on the user's own word (an image only described in a chat and never attached is not a Figure at all, and is not covered by this row) |
 | Contradictions | The precedence in 4.6 |
 | Gaps | The tiers in 4.7 |
 | Naming | The name the artifact uses; alternatives mentioned once |
@@ -442,7 +445,7 @@ The user pasted a Slack thread, `deploy.sh` and a Notion page about a service ca
 "ingest" and asked for "a guide". Abbreviated; option descriptions shown inline.
 
 ```
-docsmith: Draft outline — Guide (Guide skeleton). Destination docs/ingest.md: does not exist.
+docsmith: Draft outline: Guide (Guide skeleton). Destination docs/ingest.md: does not exist.
     1. Overview          what ingest does (Notion, para 1)
     2. How it works      sequence: webhook → queue → worker → warehouse (? with or without the retry loop)
     3. Prerequisites     AWS creds, kubectl (deploy.sh header) (? overlaps 5)
@@ -454,41 +457,41 @@ docsmith: Draft outline — Guide (Guide skeleton). Destination docs/ingest.md: 
 
 Q1 [Audience] Notion opens "for the platform team"; the Slack thread is product
    engineers asking how to deploy. Which reader?
-   a) Product engineers (Recommended) — Prerequisites stays, section 2 stays short
-   b) Platform team — Prerequisites drops, section 2 grows, add "Internals"
+   a) Product engineers (Recommended): Prerequisites stays, section 2 stays short
+   b) Platform team: Prerequisites drops, section 2 grows, add "Internals"
 user: a
   #1 Audience → product engineers (User)
 
 Q2 [Doc type] Material is mostly one procedure. Guide as drafted, or How-to "Deploy
    ingest" with Overview as preamble?
-   a) Guide (Recommended) — Rolling back stays its own Walkthrough stage
-   b) How-to — Rolling back becomes step 10 of Steps, Troubleshooting appended
+   a) Guide (Recommended): Rolling back stays its own Walkthrough stage
+   b) How-to: Rolling back becomes step 10 of Steps, Troubleshooting appended
 user: guide
   #2 Doc type → Guide (User)
 
 Q3 [Scope] Slack msgs 40–55 discuss the new schema migration tool. In scope?
-   a) Out (Recommended) — one "Not covered" line at the end of Overview; nothing explains it
-   b) In, as the one extra section — mostly TODO
+   a) Out (Recommended): one "Not covered" line at the end of Overview; nothing explains it
+   b) In, as the one extra section: mostly TODO
 user: out
   #3 Scope → migration tool out (User)   + "Not covered" line in Overview
 
 Q4 [Diagram] Request path has four hops and one retry (Slack msg 22: "worker retries
    the warehouse write 3x"). Draw the retry?
-   a) With retry (Recommended) — one `loop` block; it is what the thread asks about
-   b) Without — simpler
+   a) With retry (Recommended): one `loop` block; it is what the thread asks about
+   b) Without: simpler
 user: with
   #4 Diagram scope → retry loop drawn (User)   ~ sequence diagram rescoped
 
 Q5 [Gaps] Troubleshooting: three errors, fixes for two; "QueueDepthExceeded" has none.
-   a) Keep the section, that error as a TODO (Recommended) — reader sees it is known
-   b) Drop the section — only solved errors
+   a) Keep the section, that error as a TODO (Recommended): reader sees it is known
+   b) Drop the section: only solved errors
 user: keep it, and add "page the platform team" as the interim step
   #5 Troubleshooting → kept, TODO + interim action (User)   + section 6 restored
 
 Q6 [Sections] Prerequisites (3) and Configuration (5) share 5 of 8 env vars. Where does
    the table live?
-   a) Configuration holds all 8; Prerequisites lists only the 3 required (Recommended) — one lookup table
-   b) Both list all 8 — each section stands alone, at the cost of duplication
+   a) Configuration holds all 8; Prerequisites lists only the 3 required (Recommended): one lookup table
+   b) Both list all 8: each section stands alone, at the cost of duplication
 user: a
   #6 Sections → Prerequisites required-only, Configuration all 8 (User)   ~ 3 and 5 rescoped
 

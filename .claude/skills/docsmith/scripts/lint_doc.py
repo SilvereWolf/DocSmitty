@@ -161,6 +161,8 @@ def lint_text(text, path="doc.md", doc_type=None, repo_root=None):
             err(i, "placeholder text: %r" % l.strip()[:60])
         if re.match(r'^\s*(\.\.\.|…)\s*$', l):
             err(i, "a bare ellipsis standing in for content")
+        if '—' in re.sub(r'`[^`]*`', '', l):
+            err(i, "em dash; use a colon, a comma, a period, or parentheses instead (3.8)")
         if TODO.search(l) and i < assume_at:
             todo_count += 1
             if todo_count > 3:
@@ -352,6 +354,7 @@ BAD = [  # (document, substring expected in an error)
     ("# A\n\n> t\n\n- **What:** x\n- **For:** y\n- **Needs:** z\n\n## Overview\n\n## Steps\n\nhi\n", "empty section"),
     ("# A\n\n> t\n\n- **What:** x\n- **For:** y\n- **Needs:** z\n\n## Steps\n\nhi\n\n## Overview\n\nhi\n", "out of skeleton order"),
     ("# A\n\n> t\n\n- **What:** x\n- **For:** y\n- **Needs:** z\n\n## Overview\n\nTBD\n", "placeholder"),
+    ("# A\n\n> t\n\n- **What:** x\n- **For:** y\n- **Needs:** z\n\n## Overview\n\nRun it — then check the log.\n", "em dash"),
     ("# A\n\n> t\n\n- **What:** x\n- **For:** y\n- **Needs:** z\n\n## Overview\n\n```\nls\n```\n", "without a language tag"),
     ("# A\n\n> t\n\n- **What:** x\n- **For:** y\n- **Needs:** z\n\n## Overview\n\n```bash\n$ ls\n```\n", "prompt"),
     ("# A\n\n> t\n\n- **What:** x\n- **For:** y\n- **Needs:** z\n\n## Overview\n\n##### deep\n\nhi\n", "H5"),

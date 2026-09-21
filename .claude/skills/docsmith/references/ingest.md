@@ -220,7 +220,7 @@ Sources        S1 -> kind, date, cite|material, one line on contribution (or ski
   ```
   The shared logging step is recorded; the canonical flowchart folds it into the exit
   labels ("Log BLOCK, exit 1") rather than dropping it or giving it nodes of its own.
-- **Figures** are supplied images logged for embedding, never for reconstruction — the
+- **Figures** are supplied images logged for embedding, never for reconstruction: the
   opposite discipline from Diagrammables. Record one entry per image that is a figure
   candidate (`references/diagrams.md`, section 9), whether or not the same file is also
   being read for text. An image only described in a chat and never attached is not a
@@ -342,7 +342,7 @@ way a doc filename is slugged. An image already committed somewhere in the repo 
 referenced from its existing path and never duplicated; an image supplied from outside
 the repo (pasted, attached, a path elsewhere, or a temp path that will not outlive the
 session) is copied into that location first, with `cp`, before the document references
-it — a figure pointing outside the repo is a broken figure the moment the session ends.
+it. A figure pointing outside the repo is a broken figure the moment the session ends.
 
 ### Non-interactive mode
 

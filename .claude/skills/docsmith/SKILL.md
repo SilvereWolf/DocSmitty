@@ -17,7 +17,7 @@ promises make the output worth trusting every time:
    material actually supports; no section is ever emitted as a placeholder.
 2. **Diagrams and figures wherever they earn a place.** Flows, lifecycles, message
    exchanges, data models and topologies become Mermaid diagrams that GitHub renders
-   natively. Images you actually supply — a screenshot, a photo, an existing diagram —
+   natively. Images you actually supply (a screenshot, a photo, an existing diagram)
    are embedded as figures instead of redrawn. Detection is yours; the reader should
    never see an invented flow, a diagram of a four-item list, or an image with no
    caption and no prose that discusses it.
@@ -217,9 +217,13 @@ sequence (`references/structure.md`, 3.11); alt text is required and descriptive
 `![image]` or `![screenshot]`. Copy an image supplied from outside the repo into
 `images/` (README) or `docs/images/` (everything else) with `cp` before referencing it;
 an image already committed in the repo is referenced from its existing path, never
-duplicated. A figure that visibly exposes something the redaction rules would redact in
-text is never embedded as-is (`references/ingest.md`, section 6): ask, or exclude it and
-say why in Assumptions.
+duplicated. The user attached it for a reason, so excluding it is never a silent
+decision: ask before leaving one out (interactively, the recommended option is always to
+keep it); headless or on escape, embed it in the closest-fitting section instead and
+flag the placement as uncertain in Assumptions. The one exception is a figure that
+visibly exposes something the redaction rules would redact in text
+(`references/ingest.md`, section 6): that is excluded by default, asked about
+interactively, and noted in Assumptions when headless.
 
 ### 5. Verify and deliver
 

@@ -42,6 +42,8 @@ HEADING = re.compile(r'^(#{1,6})\s+(.*?)\s*#*\s*$')
 PLACEHOLDER = re.compile(r'\bTBD\b|\bFIXME\b|\bXXX\b|coming soon|lorem ipsum|\[insert\b|\[placeholder\]', re.I)
 TODO = re.compile(r'\bTODO\b')
 LINK = re.compile(r'\]\(([^)\s]+)(?:\s+"[^"]*")?\)')
+IMAGE = re.compile(r'!\[([^\]]*)\]\([^)\s]+(?:\s+"[^"]*")?\)')
+GENERIC_ALT = re.compile(r'^(image|screenshot|photo|picture|pic|img|figure)\.?$', re.I)
 SHELL = ("bash", "sh", "shell", "zsh", "console")
 BADGE = re.compile(r'^\s*(\[!\[|!\[|<(a|img|p|div|picture)\b)')   # badge, logo or centred-html lines
 GENERIC_SUMMARY = re.compile(r'^(click to expand|expand|details|more|show more|see more)\.?$', re.I)
@@ -217,6 +219,14 @@ def lint_text(text, path="doc.md", doc_type=None, repo_root=None):
                            "GitHub resolves links from the document, so write it relative to %s" % (rel, os.path.relpath(doc_dir, repo_root) or "."))
                 else:
                     err(i, "relative link target does not exist: %s" % rel)
+
+    # 8b. image alt text (path resolution is covered by check 8 above: ](path) matches ![alt](path) too)
+    for i, l in prose:
+        for alt in IMAGE.findall(re.sub(r'`[^`]*`', '', l)):
+            if not alt.strip():
+                warn(i, "image has no alt text; describe what it shows")
+            elif GENERIC_ALT.match(alt.strip()):
+                warn(i, "alt text %r is generic; describe what the image actually shows" % alt.strip())
 
     # 9. tables
     for idx, (i, l) in enumerate(prose):

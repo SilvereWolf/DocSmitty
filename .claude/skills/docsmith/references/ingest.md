@@ -60,7 +60,7 @@ never only in your head: anything not in the transcript is lost by the next turn
 | Glob | Contains `*` or `?` | Expand, then apply the directory recipe to the matches. |
 | Directory | Is a directory | Directory recipe below. |
 | URL | `http(s)://` | Fetch with a web-fetch tool. Tag `cite` (user wants it referenced: paper, upstream docs) or `material` (content to digest). No fetch tool: ask for a paste when interactive; otherwise record `skipped: could not fetch` and file dependent facts as Gaps. |
-| Image / screenshot | `.png .jpg .webp` | File-reading tool. A screenshot of a chat is a chat; note that reading may have missed text. |
+| Image / screenshot | `.png .jpg .jpeg .webp .gif .svg` | File-reading tool. Plays one of two roles, sometimes both (`references/diagrams.md`, section 9): a screenshot of a chat or a document is read for its text like the thing it pictures (note that reading may have missed text); a UI screenshot, a photo or an existing diagram is a **figure candidate** instead, logged in the inventory's `Figures` bucket (section 4) to embed as-is, never redrawn. |
 | Existing README / docs | `README*`, `docs/`, root `*.md` | Material, style sample (heading style, badges, emoji policy, language) AND possible collision target (section 8). |
 | Code | Source files | Code recipe below. |
 
@@ -180,6 +180,7 @@ Directives     from section 1; highest authority
 Facts          F1 ... one-line verifiable statements [Sn]
 Procedures     P1 ... name; ordered steps, each with its command [Sn]; [unverified] where needed
 Diagrammables  X1 ... typed record (below) with suggested Mermaid type [Sn]
+Figures        IM1 ... image path; what it shows; candidate section; read-for-text? y/n [Sn]
 Decisions      D1 ... decision; why; [Sn]; "Rejected: ..." lines
 Terms          canonical name -> aliases seen [Sn]
 Contradictions C1 ... "S2 says X, S5 says Y; S5 is later / S5 is code" + proposed winner
@@ -219,6 +220,11 @@ Sources        S1 -> kind, date, cite|material, one line on contribution (or ski
   ```
   The shared logging step is recorded; the canonical flowchart folds it into the exit
   labels ("Log BLOCK, exit 1") rather than dropping it or giving it nodes of its own.
+- **Figures** are supplied images logged for embedding, never for reconstruction — the
+  opposite discipline from Diagrammables. Record one entry per image that is a figure
+  candidate (`references/diagrams.md`, section 9), whether or not the same file is also
+  being read for text. An image only described in a chat and never attached is not a
+  Figure; it stays a Gap.
 - **Decisions** feed Overview and How it works (the why next to the mechanism); **Terms**
   give the writer one canonical name per thing, and three or more aliased terms justify a
   short glossary table inside Reference.
@@ -291,6 +297,13 @@ a list is cheap, a leak is not.
 List every redaction in the delivery message by kind and location, never by value, and
 never write raw values into working notes.
 
+**Images.** The same risks exist in pixels: a visible API key in a screenshot, a name on
+a badge in a photo. An image can be read like any other file, but its pixels cannot be
+edited the way a typed placeholder redacts text. A figure candidate that visibly exposes
+something the rules above would redact is never embedded as-is: ask the user to crop or
+replace it when interactive; when headless, exclude it, and say exactly what was found
+and why in Assumptions. See `references/diagrams.md` section 9 for the full rule.
+
 ## 7. Scale: large dumps
 
 "Large": over ~50k words, ~40 files, or a chat over ~300 turns; one pass over that much
@@ -322,6 +335,15 @@ registering); a bare file there breaks the build or is invisible. Slug: lowercas
 hyphenated, from the title, no dates or versions (`deploying-the-observer.md`, not
 `Deploy_Guide_v2_final.md`); those belong inside the doc, where they can be updated.
 
+**Figure assets.** An embedded image (`references/diagrams.md`, section 9) needs a stable
+path next to the document that references it: `images/<figure-slug>.<ext>` beside a root
+`README.md`; `docs/images/<figure-slug>.<ext>` beside anything in `docs/`. Slug the same
+way a doc filename is slugged. An image already committed somewhere in the repo is
+referenced from its existing path and never duplicated; an image supplied from outside
+the repo (pasted, attached, a path elsewhere, or a temp path that will not outlive the
+session) is copied into that location first, with `cp`, before the document references
+it — a figure pointing outside the repo is a broken figure the moment the session ends.
+
 ### Non-interactive mode
 
 Non-interactive means the user escaped the interview ("go", "just write it", "nobody can
@@ -352,7 +374,7 @@ lacks, and is a source with its own id.
 Short; the doc is the deliverable. Omit empty blocks.
 
 ```
-Wrote docs/observer-guide.md (312 lines, 1 Mermaid diagram).
+Wrote docs/observer-guide.md (312 lines, 1 Mermaid diagram, 1 figure).
 One line: guide to the pre-execution guardrail: what it blocks, when it asks a human, how to extend the lists.
 
 Assumptions (unsourced, marked in the doc):
@@ -360,6 +382,8 @@ Assumptions (unsourced, marked in the doc):
 
 Redacted:
 - 1 Slack bot token (S4, message from 2026-08-12) -> <SLACK_BOT_TOKEN>
+
+Figures: 1 embedded (docs/images/observer-guide/rule-editor.png, copied from the pasted attachment); 1 skipped (a chat screenshot, read for its text only).
 
 Unresolved: whether ALLOW log lines should name a rule (S3 chat summary says yes, S1 code writes none); doc follows the code.
 

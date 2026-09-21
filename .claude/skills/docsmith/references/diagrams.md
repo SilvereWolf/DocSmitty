@@ -14,6 +14,7 @@ Mermaid fences are the diagram medium because GitHub renders them from plain Mar
 6. [Mermaid-on-GitHub pitfalls](#6-mermaid-on-github-pitfalls)
 7. [Canonical examples](#7-canonical-examples)
 8. [Validation with scripts/check_mermaid.py](#8-validation-with-scriptscheck_mermaidpy)
+9. [Real images as Figures](#9-real-images-as-figures)
 
 ## 1. Detection: signals to diagram type
 
@@ -64,7 +65,7 @@ Do not draw when the structure is a linear list (install, configure, run, verify
 
 **Diagrams already in the inputs.** When an existing README or input doc contains a Mermaid fence, keep it only if every node and edge still traces to the current material; redraw it in the canonical shape if it does and the syntax is fragile; drop it (and say so in the chat summary) if it describes something the material no longer supports. Never carry a diagram forward unread.
 
-**Material you cannot read.** Screenshots, whiteboard photos and image links referenced in a chat are absent material. Do not reconstruct a diagram from someone's description of a picture; note in Assumptions that the image was not available.
+**Material you cannot read.** A picture *described* in a chat but never attached ("see the flow diagram I drew") is absent material: do not reconstruct a diagram from someone's description of it; note in Assumptions that the image was not available. A picture actually *supplied* as a file is different: it is real material, and section 9 covers it. Prefer showing the real image over redrawing the same thing as Mermaid — a supplied architecture screenshot is more trustworthy than a reconstruction, and drawing both is redundant.
 
 ### Anti-fabrication
 
@@ -345,3 +346,35 @@ This list is the single source of truth for what the linter sees; its fixtures w
 Fix every error, re-run until exit 0. Treat warnings as "fix unless you have a reason". Do not deliver with a failing block; if a block genuinely cannot be fixed, replace it with a nested list and say so in the Assumptions note. If the script cannot be run at all (no `python3`, Bash unavailable), do the section 6 checklist by hand for every block and note in Assumptions that Mermaid was not machine-checked.
 
 If `mmdc` (mermaid-cli) is already on `PATH` you may render each block as an extra check (`mmdc -i DOC.md -o /tmp/render.md`, read its stderr); never install it, never ask the user to install it, never block delivery on it, and treat section 6 as the authority when the two disagree, since mermaid-cli's version differs from GitHub's.
+
+## 9. Real images as Figures
+
+Everything above draws a diagram from text: it is generated, so it must be earned (section 2) and never fabricated (the anti-fabrication rules). A real image the user hands you — a screenshot, a photo, an existing architecture picture someone exported as a PNG, a chart — is the opposite case: it already exists, so nothing about it is generated or inferred. The document-style contract (`references/structure.md`, 3.11) already calls a diagram a "Figure"; a supplied image is a Figure too, of a different kind, and the two share one placement rule, one caption convention and one figure-numbering sequence.
+
+**Detect.** An image file in the material (`.png .jpg .jpeg .webp .gif .svg`) plays one of three roles, and more than one can apply to the same file:
+
+- **Read for its text** (`references/ingest.md`, section 2): a screenshot of a chat, a photo of a whiteboard covered in notes, a scanned page. Treat exactly like the transcript or document it is a picture of; it is a source, not a figure.
+- **A figure candidate**: the image itself, as a picture, is something a reader of the finished document would want to see — a UI screenshot, a hardware photo, a chart, an architecture diagram someone already drew. Log it in the inventory's `Figures` bucket (`references/ingest.md`, section 4): id, path, one line on what it shows, a candidate section, and whether it is also being read for text.
+- **Neither**: decorative, redundant with a Mermaid diagram already earned from the same material, or off-subject. Note under Sources as `not used` and say why, the same as any other skipped material.
+
+A screenshot of a chat is read for its text by default, not embedded — the conversation it shows is rarely what a reader of the finished doc needs to see. A UI screenshot, a photo or an existing diagram defaults to a figure candidate. When the same image is plausibly both (a screenshot that shows a specific error dialog worth seeing *and* contains a stack trace worth quoting), do both: read it for the text that goes in the doc's prose, and also embed it as a figure where the dialog itself is the point. When it is genuinely unclear which role fits, it is an interview question like any other structural choice (section 3), not a coin flip.
+
+**Decide.** There is no worthiness test to pass — the image is real, supplied material, not something that has to earn its existence the way a generated diagram does. The only question is placement: does some section of the doc actually walk through what the image shows? An image with no section to sit next to is not embedded; note it under Sources as `not used: no section discusses it` rather than tacking it onto the end of the doc as decoration. Keep the same one-Figure-per-section default the diagram budget uses (section 2) so a doc does not turn into a slideshow; a How-to or Runbook, terse by contract, rarely wants more than one or two figures total.
+
+**Never redraw a supplied image as Mermaid**, and never draw a Mermaid diagram of the same flow a supplied image already shows — pick one telling of the same structure, and the real image wins when both exist (see section 2 above). A supplied image and a *different* Mermaid diagram (the image is a UI screenshot, the Mermaid diagram is the request flow behind that UI) can coexist freely; they show different things.
+
+**Asset handling.** Where the file lives and its naming follow the doc's own destination convention; see `references/ingest.md`, section 8. An image already committed in the repo at some path is referenced from there and never copied. An image supplied from outside the repo (pasted, attached, an absolute path elsewhere) is copied into that convention's location before the document references it — a document that points at a path outside the repo, or at a temp path that will not survive the session, is a broken figure waiting to happen.
+
+**Sensitive content in images.** `references/ingest.md`, section 6 covers text; the same risk exists in pixels — a visible API key in a screenshot, a name on a badge in a photo, a password on a sticky note in the background. You can see an image (it is read the same way any other file is), but you cannot edit its pixels the way a typed placeholder redacts text. When a supplied image visibly exposes something that would be redacted if it were text, do not embed it as-is: ask the user to crop or replace it when interactive, or exclude it and say exactly what was found and why in Assumptions when headless. Never embed a visibly sensitive image on the assumption that cropping can happen later — the image is committed the moment the document is.
+
+**Embed.** Standard Markdown image syntax, with the same lead-in/caption framing a diagram gets (section 5), reusing the same figure-numbering sequence when the doc has more than one Figure of either kind:
+
+````markdown
+The dashboard groups jobs into three columns by status:
+
+![Job dashboard with three columns: Queued, Running, Failed, each showing a job count](images/job-dashboard.png)
+
+*Figure: the job dashboard as captured 2026-09-20; column order matches the state machine in [How it works](#how-it-works).*
+````
+
+Alt text is required and descriptive — it is what a reader gets when the image fails to load or a screen reader is used, so `![Screenshot](...)` or `![image](...)` fails the same test a link reading "here" does (`references/structure.md`, 3.8). The caption states what the image shows and, when useful, when it was captured or what it corroborates; unlike a diagram's caption it never needs an inference note, since nothing about a real image is inferred. `scripts/lint_doc.py` checks that every image path resolves (the same relative-link check a doc-to-doc link gets) and warns on missing or generic alt text; it cannot check whether the image still matches what the prose claims about it — reread each embedded image against its caption as part of the quality-bar pass (`references/structure.md`, section 7).

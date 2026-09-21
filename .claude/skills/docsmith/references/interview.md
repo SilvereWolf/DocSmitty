@@ -39,6 +39,7 @@ item:
 | Facts | Versions, ports, names, exit codes, owners | Anchors; never asked about |
 | Procedures | Ordered steps (install, deploy, rollback); `[unverified]` when only a chat states a step | Action sections; unverified steps are gap questions |
 | Diagrammables | Candidate diagrams, each with a suggested Mermaid type (`references/diagrams.md`) | Diagram branch decides scope and placement, not detection |
+| Figures | Candidate images to embed, real files the user supplied (`references/diagrams.md`, section 9) | Same branch as Diagrammables: decides which are embedded and where, not detection |
 | Decisions | Choices the material records with their why, and rejected branches with a stated reason | Overview and How it works material; not contradictions |
 | Terms | Canonical name -> aliases seen | Naming branch |
 | Contradictions | Two sources disagree and the precedence in 4.6 cannot settle it | One question each |
@@ -102,8 +103,9 @@ One question at a time. Say "go" whenever you want the defaults shown here.
 ## 3. How a question earns a turn
 
 A question earns a turn when the answer would change the outline (sections, order, type,
-destination), the diagram set (which flows are drawn, with which Mermaid type), or a
-diagram's scope (which nodes, participants or states are in it). Use this exact test in
+destination), the diagram set (which flows are drawn, with which Mermaid type), a
+diagram's scope (which nodes, participants or states are in it), or which supplied
+images are embedded as figures and where. Use this exact test in
 section 9 as the stopping rule; nothing else qualifies, and a question that only changes
 wording is fixed faster in review.
 
@@ -176,7 +178,7 @@ targets, renames only from the vocabulary, never a reorder.
 - "The chat's design rationale (why exit 2 exists, why bash and not Python) fills six
   lines. In Overview, or in How it works next to the flowchart?"
 
-### 4.5 Diagrams: scope and placement
+### 4.5 Diagrams and figures: scope and placement
 
 Detection and type selection are done (`references/diagrams.md`). When the material
 clearly contains a flow, do not ask whether to draw it; ask about scope or placement.
@@ -188,6 +190,18 @@ Ask about inclusion only for a marginal candidate, and prefer skipping over gues
   (7 nodes)?"
 - "The chat mentions a retry loop in the uploader but no states or limits. I would
   rather skip a state diagram than draw one from guesses. Skip, or do you know the states?"
+
+Supplied images (the `Figures` bucket) follow the same branch: which are embedded and
+where, never whether one *could* be reconstructed as Mermaid instead (`references/diagrams.md`,
+section 9 already settled that a real image always wins over a redraw). Ask when a
+supplied image could plausibly sit in more than one section, or when its role — read for
+its text versus embedded as a figure — is not obvious from the material.
+
+- "You attached `dashboard.png`. It could illustrate How it works (what the dashboard
+  looks like) or the first Walkthrough step (what you see after setup). Which, or both?"
+- "`error-dialog.png` both shows a specific error worth seeing and contains a stack trace
+  worth quoting. Embed it as a figure in Troubleshooting *and* quote the stack trace in
+  prose (Recommended), or one or the other?"
 
 ### 4.6 Contradictions
 
@@ -257,6 +271,7 @@ deterministic rather than invented on the spot. Each unanswered branch becomes a
 | Scope | Everything about the named subject; digressions get one line under "Not covered"; deferred work gets a short "Open items" section |
 | Sections | The skeleton; drop a section with nothing to fill; merge two whose content overlaps by more than half |
 | Diagrams | Every clear flow, at the granularity the material supports, with shared side steps (logging, metrics) folded into the terminal labels as the canonical shapes do; marginal candidates skipped |
+| Figures | Every supplied image with a section that discusses it, embedded there; an image with no discussing section, or only described and never attached, left out |
 | Contradictions | The precedence in 4.6 |
 | Gaps | The tiers in 4.7 |
 | Naming | The name the artifact uses; alternatives mentioned once |

@@ -7,7 +7,7 @@ This file is the contract every docsmith output follows. Read it in full before 
 1. [The core skeleton](#1-the-core-skeleton)
 2. [Doc-type matrix](#2-doc-type-matrix)
 3. [Style contract (GitHub-flavored Markdown)](#3-style-contract-github-flavored-markdown)
-4. [Where diagrams go](#4-where-diagrams-go)
+4. [Where diagrams and figures go](#4-where-diagrams-and-figures-go)
 5. [Decisions the interview settles](#5-decisions-the-interview-settles)
 6. [Adaptivity rules](#6-adaptivity-rules)
 7. [Quality bar checklist](#7-quality-bar-checklist)
@@ -205,18 +205,32 @@ Delete this block after review.
 
 The blank line before `</details>` is not optional (3.7); `scripts/lint_doc.py` rejects the block without it.
 
+### 3.11 Figures (real images)
+
+A Figure is either a generated Mermaid diagram (3.9's neighbor concept, detected and drawn per the diagrams reference) or a real image the user supplied — a screenshot, a photo, an existing architecture picture. Detection, worthiness-equivalent judgement and asset handling for a supplied image are the diagrams reference's job (section 9); this section fixes how one looks in the Markdown, which is identical for both kinds:
+
+```markdown
+The dashboard groups jobs into three columns by status:
+
+![Job dashboard with three columns: Queued, Running, Failed, each showing a job count](images/job-dashboard.png)
+
+*Figure: the job dashboard as captured 2026-09-20; column order matches the state machine in [How it works](#how-it-works).*
+```
+
+Alt text is required and descriptive, never `![image]` or `![screenshot]` — the same rule 3.8 gives links ("descriptive text, never 'here'") applies to what a reader sees when the image does not load. The italic caption line follows the same convention a diagram's caption does (section 4) and shares its figure-numbering sequence when the doc has more than one Figure of either kind. Placement, budget and the "never fabricate" boundary are section 4's and the diagrams reference's; only a Mermaid diagram is generated, so only a Mermaid diagram needs the anti-fabrication rules — a supplied image is embedded as-is or not at all.
+
 ---
 
-## 4. Where diagrams go
+## 4. Where diagrams and figures go
 
-Detection and construction belong to the diagrams reference; this section fixes placement and framing so the two agree.
+Detection and construction belong to the diagrams reference; this section fixes placement and framing so the two agree. Everything here applies equally to a Mermaid diagram and a supplied image embedded as a Figure (3.11) — both are visual material that sits next to the prose it illustrates.
 
-- A diagram sits **immediately before the prose that walks through it**, never after and never in an appendix.
-- Lead in with one sentence ending in a colon ("The observer evaluates every action in three passes:"), then the `mermaid` fence, then an italic caption line directly under it: `*Figure 1: Observer decision flow. Exit codes 0, 1 and 2 map to allow, block and needs-human.*` Number figures only when the doc has more than one and the prose refers to them by number.
-- The walk-through prose uses the diagram's node labels **verbatim**. If the prose needs a term the diagram lacks, add it to the diagram or drop it from the prose.
-- Natural homes: **How it works** for topology, lifecycle, state and data-model diagrams; a specific **step** in Getting going for a sequence diagram of what that step triggers (lead-in, fence and caption indented to the step's content column); **Procedure** in a Runbook for the decision flowchart, before step 1.
-- One diagram per H2 unless the section genuinely describes two independent mechanisms. A diagram never replaces numbered steps; it explains them.
-- When the diagrams reference reports "nothing diagrammable", How it works is prose only, and that is correct. An invented "User → Tool → Output" drawing is worse than none.
+- A diagram or figure sits **immediately before the prose that walks through it**, never after and never in an appendix.
+- Lead in with one sentence ending in a colon ("The observer evaluates every action in three passes:"), then the `mermaid` fence or the `![alt](path)` image, then an italic caption line directly under it: `*Figure 1: Observer decision flow. Exit codes 0, 1 and 2 map to allow, block and needs-human.*` Number figures only when the doc has more than one and the prose refers to them by number; a diagram and a supplied image share one numbering sequence.
+- The walk-through prose uses the diagram's node labels, or the figure caption's terms, **verbatim**. If the prose needs a term the diagram lacks, add it to the diagram or drop it from the prose.
+- Natural homes: **How it works** for topology, lifecycle, state and data-model diagrams, and for a supplied architecture or screenshot image; a specific **step** in Getting going for a sequence diagram of what that step triggers, or a screenshot of what that step produces (lead-in, fence or image and caption indented to the step's content column); **Procedure** in a Runbook for the decision flowchart, before step 1.
+- One diagram or figure per H2 unless the section genuinely describes two independent mechanisms. A diagram never replaces numbered steps; it explains them.
+- When the diagrams reference reports "nothing diagrammable" and no supplied image earns a place, How it works is prose only, and that is correct. An invented "User → Tool → Output" drawing is worse than none, and an image dumped in with no prose that discusses it is worse than leaving it out.
 
 ---
 
@@ -232,6 +246,7 @@ These are the structural choices this contract leaves open. The grill-me phase a
 | The one extra H2 and its name | None | A ten-line-plus concept fits no slot. |
 | Rename choice | The first vocabulary entry for the type | Two vocabulary entries fit equally ("Architecture" versus "Decision flow"). |
 | Which mechanism gets the diagram | The budget rule (diagrams reference, section 2) and its per-type table (section 3) | Several candidates and a one-diagram budget. |
+| Which supplied images become figures, and where | Embed one per section that discusses it; skip an image no section discusses (diagrams reference, section 9) | A supplied image could plausibly go in more than one section, or its role (read for text vs. embedded figure) is unclear. |
 | Sources form | Per 3.9: HTML comment for a README, `<details>` block otherwise | The user has said the doc is internal (visible section) or wants a README's provenance shown. |
 | Badges and emoji opt-in | Off | The repo's existing docs use them. |
 | Existing file handling | Trivial stub: replace and say so. Real content: write `<name>.new.md` beside it | A file with real content exists at the destination. Asked first, because it is the only irreversible decision. |
@@ -289,7 +304,7 @@ Run this over the finished draft. Fix, do not annotate. The first group is mecha
 
 9. Every numbered step has a bold imperative line, an action (fenced only when typed), and an expected result that is traceable, not invented.
 10. No invented output strings, commands, flags, badges, licenses, versions, dates or URLs. Everything either traces to a listed source or sits in Assumptions; chat-derived "planned" behaviour is marked in the body.
-11. Every diagram has a lead-in, a caption and prose that reuses its node labels; no diagram exists that the diagrams reference did not find.
+11. Every diagram has a lead-in, a caption and prose that reuses its node labels; no diagram exists that the diagrams reference did not find. Every embedded figure has descriptive alt text, a lead-in and a caption; no figure was redrawn as Mermaid, and no Mermaid diagram duplicates a figure already shown.
 12. Terminology is consistent: one spelling per tool, command, path and code name across prose, tables and diagrams.
 13. Voice is second person, present tense; no "we" outside Onboarding; no emoji in headings, bullets or tables.
 14. Length is within the ceiling, and got there by moving detail into `<details>` or Reference, not by deleting steps.

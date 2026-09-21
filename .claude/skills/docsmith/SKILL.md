@@ -1,8 +1,8 @@
 ---
 name: docsmith
-description: Use this whenever the user asks for a README, guide, how-to, tutorial, walkthrough, runbook, playbook, onboarding doc or setup instructions, or wants to "document", "write up" or "turn into a doc" something (including "document how X works") from notes, chat transcripts, links or code, even without saying "docsmith". It turns that raw material into one polished GitHub-flavored Markdown document with a fixed core skeleton adapted to the material, Mermaid UML diagrams (flowchart, sequence, state, ER, class) only where the material describes a real flow, and a short "grill me" structuring interview before writing. Not for small edits to an existing doc (a typo, one section), a summary that stays in chat, a standalone diagram with no document around it, or docstrings and code comments.
-argument-hint: "[files, dirs, URLs or pasted material] [--type readme|guide|howto|runbook|onboarding] [--out path] [--no-grill]"
-allowed-tools: Read, Glob, Grep, Write, Edit, WebFetch, AskUserQuestion, Bash(ls:*), Bash(grep:*), Bash(jq:*), Bash(python3 ${CLAUDE_SKILL_DIR}/scripts/check_mermaid.py:*), Bash(python3 ${CLAUDE_SKILL_DIR}/scripts/lint_doc.py:*)
+description: Use this whenever the user asks for a README, guide, how-to, tutorial, walkthrough, runbook, playbook, onboarding doc or setup instructions, or wants to "document", "write up" or "turn into a doc" something (including "document how X works") from notes, chat transcripts, links, code or images, even without saying "docsmith". It turns that raw material into one polished GitHub-flavored Markdown document with a fixed core skeleton adapted to the material, Mermaid UML diagrams (flowchart, sequence, state, ER, class) only where the material describes a real flow, real supplied images embedded as figures rather than redrawn, and a short "grill me" structuring interview before writing. Not for small edits to an existing doc (a typo, one section), a summary that stays in chat, a standalone diagram with no document around it, or docstrings and code comments.
+argument-hint: "[files, dirs, URLs, images or pasted material] [--type readme|guide|howto|runbook|onboarding] [--out path] [--no-grill]"
+allowed-tools: Read, Glob, Grep, Write, Edit, WebFetch, AskUserQuestion, Bash(ls:*), Bash(grep:*), Bash(jq:*), Bash(cp:*), Bash(python3 ${CLAUDE_SKILL_DIR}/scripts/check_mermaid.py:*), Bash(python3 ${CLAUDE_SKILL_DIR}/scripts/lint_doc.py:*)
 ---
 
 # Docsmith: README, Guide and How-to writer
@@ -15,10 +15,12 @@ promises make the output worth trusting every time:
 1. **Same skeleton, adapted contents.** Every document has the same recognizable core
    sections in the same order. Sections appear, merge or drop according to what the
    material actually supports; no section is ever emitted as a placeholder.
-2. **Diagrams wherever the material earns one.** Flows, lifecycles, message exchanges,
-   data models and topologies become Mermaid diagrams that GitHub renders natively.
-   Detection is yours; the reader should never see an invented flow or a diagram of a
-   four-item list.
+2. **Diagrams and figures wherever they earn a place.** Flows, lifecycles, message
+   exchanges, data models and topologies become Mermaid diagrams that GitHub renders
+   natively. Images you actually supply — a screenshot, a photo, an existing diagram —
+   are embedded as figures instead of redrawn. Detection is yours; the reader should
+   never see an invented flow, a diagram of a four-item list, or an image with no
+   caption and no prose that discusses it.
 3. **Grill before writing.** Structure is decided with the user, one pointed question at a
    time, each anchored in something concrete from the material. Writing starts only when
    no open decision would change the outline, or the user says "go".
@@ -72,6 +74,10 @@ chat-digestion rules, the inventory format and the output rules.
   are. A linear step list is a Procedure, however the source describes it. A flow whose
   participants or messages exist only in a chat proposal the user never adopted is a
   Gap or an Open items line, never a Diagrammable. Empty bucket, no diagram.
+- A supplied image file (`.png .jpg .jpeg .webp .gif .svg`) is read for its text (a
+  screenshot of a chat is a chat) or logged as a Figure candidate to embed as-is, or
+  both; never reconstructed as Mermaid, and never invented from a chat's description of
+  a picture nobody attached (`references/diagrams.md`, section 9).
 - Never execute the scripts you are documenting, because most write a log, a file or a
   network call as a side effect; take their printed strings and exit codes from the
   code. Run `--help` only on an entry point that visibly parses it with no side
@@ -89,11 +95,12 @@ chat-digestion rules, the inventory format and the output rules.
 ### 2. Outline: propose the type, the sections and the diagram set
 
 Read `references/structure.md` sections 1 and 2 for the skeleton and the doc-type
-matrix, and `references/diagrams.md` sections 1 to 3 for detection, the worthiness test
-and the diagram budget. Produce a draft outline before asking anything: type, ordered
-sections as `+`/`-`/`~` deviations from the type's skeleton with one line each on what
-fills them, the candidate diagrams with their Mermaid type and section, the destination
-path and whether it exists, and a specific `(? ...)` on every open point.
+matrix, and `references/diagrams.md` sections 1 to 3 and 9 for detection, the
+worthiness test, the diagram budget, and how a supplied image becomes a figure. Produce
+a draft outline before asking anything: type, ordered sections as `+`/`-`/`~` deviations
+from the type's skeleton with one line each on what fills them, the candidate diagrams
+and figures with their type (Mermaid type, or "supplied image") and section, the
+destination path and whether it exists, and a specific `(? ...)` on every open point.
 
 - Detect diagram candidates while digesting. Passages shaped like "if / otherwise /
   retry until", "A calls B, B responds", "moves to state X when", "has many / belongs
@@ -204,6 +211,16 @@ theme. Each diagram is preceded by one plain sentence, ending in a colon, naming
 shows and its shape, so the doc survives a raw-fence view, and followed by one italic
 `*Figure: ...*` line.
 
+Figures: read `references/diagrams.md` section 9 while embedding. A supplied image gets
+the same lead-in-and-caption framing as a diagram and shares its figure-numbering
+sequence (`references/structure.md`, 3.11); alt text is required and descriptive, never
+`![image]` or `![screenshot]`. Copy an image supplied from outside the repo into
+`images/` (README) or `docs/images/` (everything else) with `cp` before referencing it;
+an image already committed in the repo is referenced from its existing path, never
+duplicated. A figure that visibly exposes something the redaction rules would redact in
+text is never embedded as-is (`references/ingest.md`, section 6): ask, or exclude it and
+say why in Assumptions.
+
 ### 5. Verify and deliver
 
 - Run both linters and fix until each exits 0:
@@ -221,13 +238,14 @@ shows and its shape, so the doc survives a raw-fence view, and followed by one i
   multi-turn interview the commands may ask for permission once. The doc linter covers
   the mechanical half of the structure checklist (one H1, tagline, at-a-glance block,
   heading vocabulary and order, empty sections, placeholders, fence tags, alert
-  placement, anchors, relative links, tables, `<details>` blocks, type-specific slots).
-  The Mermaid linter catches the syntax that fails to render or renders the wrong
-  diagram. Neither sees a wrong arrow direction, a missing branch label or an invented
-  output string; re-read each diagram and each expected-result line against the
-  material for those. If a script cannot run, do its checks by hand and say so in
-  Assumptions. A diagram you cannot fix becomes a nested list plus an Assumptions
-  bullet.
+  placement, anchors, relative links and image paths, image alt text, tables,
+  `<details>` blocks, type-specific slots). The Mermaid linter catches the syntax that
+  fails to render or renders the wrong diagram. Neither sees a wrong arrow direction, a
+  missing branch label, an invented output string, or a figure whose caption no longer
+  matches what the image shows; re-read each diagram, each figure and each
+  expected-result line against the material for those. If a script cannot run, do its
+  checks by hand and say so in Assumptions. A diagram you cannot fix becomes a nested
+  list plus an Assumptions bullet.
 - Run the judgement half of the checklist in `references/structure.md`, section 7: every
   step has a traceable expected result, nothing invented, one spelling per term,
   Sources complete, Assumptions present exactly when triggered.
@@ -239,8 +257,8 @@ shows and its shape, so the doc survives a raw-fence view, and followed by one i
   merge or replace, and the delivery message carries the diff summary; when you cannot
   ask, write `<name>.new.md` and lead with the `mv` command.
 - Deliver in one short message: the path and size, a one-line summary of the doc, the
-  assumptions taken, the redactions made, what the interview left unresolved, the
-  sources used and anything skipped.
+  assumptions taken, the redactions made, the figures embedded and skipped, what the
+  interview left unresolved, the sources used and anything skipped.
 
 ## Reference files
 
@@ -248,7 +266,7 @@ shows and its shape, so the doc survives a raw-fence view, and followed by one i
 |------|--------------|
 | `references/ingest.md` | Move 1, every run; it defines the inventory every later move reads |
 | `references/structure.md` | Move 2 (sections 1 and 2), Move 4 (all), Move 5 (section 7 checklist) |
-| `references/diagrams.md` | Move 2 (sections 1 to 3), Move 4 (sections 4 to 7), Move 5 (section 8) |
+| `references/diagrams.md` | Move 2 (sections 1 to 3, 9), Move 4 (sections 4 to 7, 9), Move 5 (section 8) |
 | `references/interview.md` | Move 3, before the first question |
 | `scripts/lint_doc.py` | Move 5, on every document |
 | `scripts/check_mermaid.py` | Move 5, on every document that contains a Mermaid fence |
